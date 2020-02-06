@@ -24,9 +24,9 @@ function convertChar(c) {
 }
 
 const changeCase2 = (str) => {
-  return Array.from(str)  //transform string to array of chars
+  return [...str]  //transform string to array of chars
     .map(c => convertChar(c))
-    .join('');  //collect
+    .join("");  //collect
 };
 
 
@@ -49,8 +49,8 @@ const filterNonUnique = (arr) => {
       map.set(elem, false);
     }
   }
-  return Array.from(map)
-    .filter( ([key, value]) => value == false )
+  return [...map]
+    .filter( ([key, value]) => value === false )
     .map(([key, value]) => key);
 };
 
@@ -62,22 +62,12 @@ describe('filterNonUnique', () => {
 });
 
 // ==== Sort string in alphabetical order ====
-const alphabetSort = (str) => {
-  if(str && isString(str)) {
-      return Array.from(str).sort().join("");  
-  }
-  return null;
-  
-};
+const alphabetSort = (str) => {return[...str].sort().join("")};
 
 describe('alphabetSort', () => {
   it('should accept a string type only', () => {
-    expect(alphabetSort()).to.equal(null);
+    expect(() => alphabetSort()).to.throw();
     expect(() => alphabetSort('Text')).not.to.throw();
-    expect(alphabetSort(123)).to.equal(null);
-    expect(alphabetSort(null)).to.equal(null);
-    expect(alphabetSort([])).to.equal(null);
-    expect(alphabetSort([1,2,3])).to.equal(null);
   });
 
   it('should convert the letters of a given string in alphabetical order', () => {
@@ -86,26 +76,17 @@ describe('alphabetSort', () => {
 });
 
 // ==== Get min integer ====
-const getSecondMinimum = (arr) => {
-  if(arr && arr.length > 1) {
-    return arr.sort()[1];
-  }
-  return undefined;
-  
-};
+const getSecondMinimum = (arr) => {return arr.sort()[1]};
 
 describe('getSecondMinimum', () => {
   it('should get array of integers and return second minimum value', () => {
     expect(getSecondMinimum([5,0,7,3,8])).to.equal(3);
-    expect(getSecondMinimum([])).to.equal(undefined);
-    expect(getSecondMinimum([10])).to.equal(undefined);
-    expect(getSecondMinimum(null)).to.equal(undefined);    
   });
 });
 
 // ==== Double every even integer ====
 const doubleEveryEven = (arr) => { 
-  return arr.map(e => e % 2 == 0 ? e*2 : e);
+  return arr.map(e => e % 2 === 0 ? e*2 : e);
 };
 
 describe('doubleEveryEven', () => {
@@ -116,9 +97,9 @@ describe('doubleEveryEven', () => {
 
 // ==== Create array with all possible pairs of two arrays ====
 const getArrayElementsPairs = (a1, a2) => {
-  const result = new Array();
-  for(const e1 of a1) {
-    for(const e2 of a2) {
+  let result = new Array();
+  for(let e1 of a1) {
+    for(let e2 of a2) {
       result.push([e1, e2]);
     }
   }
@@ -137,11 +118,11 @@ const deepEqual = (a1 , a2) => {
     //console.log("lengths are not equal " + Object.entries(a1).length + "  "  + Object.entries(a2).length);
     return false;
   }  
-  for (const [key, value] of Object.entries(a1)) {
+  for (let [key, value] of Object.entries(a1)) {
     //console.log("iterate of " + key + " ; " + value );
     if(typeof value === 'object' && value !== null) {
       //console.log("inside comparing objects " + value + " ; " + a2[key]);      
-      const innerObjTheSame = deepEqual(value, a2[key]);
+      let innerObjTheSame = deepEqual(value, a2[key]);
       //console.log("result of comparing " + innerObjTheSame);
       if(!innerObjTheSame) {
         //console.log("returning false because of " + innerObjTheSame);
@@ -166,41 +147,31 @@ describe('deepEqual', () => {
 });
 
 function isString(input) {
-  //return Object.prototype.toString.call(input) === "[object String]";
-  return typeof input === 'string';
+  return Object.prototype.toString.call(input) === "[object String]";
 }
 function isArray(input) {
   return Array.isArray(input);
 }
-
-function getDate(input) {
-  if (isString(input)) {
-    return new Date(input);
-  }
-  else if(Object.prototype.toString.call(input) === '[object Date]') {
-    return input;
-  }
-  else if(typeof input === 'number') {
-    const date = new Date();
-    date.setTime(input);
-    return date;
-  }
-  else if(isArray(input)) {
-    return new Date(...input);    
-  }
-  else {
-    throw new Error('invalid input data');
-  }
-}
 // ==== Format date ====
 const formatDate = (input) => {
-  const date = getDate(input);
-  
-  const day = date.getDate() < 10 ? '0'+date.getDate() : date.getDate();
-  const monthUnformatted = date.getMonth()+1
-  const month =  monthUnformatted < 10 ? '0'+monthUnformatted : monthUnformatted;
-  const year = date.getFullYear().toString().substr(-2);
-  const formatted = day+'.'+month+'.'+year;
+  if (isString(input)) {
+    var date = new Date(input);
+  }
+  else if(Object.prototype.toString.call(input) === '[object Date]') {
+    var date = input;
+  }
+  else if(typeof input == 'number') {
+    var date = new Date();
+    date.setTime(input);
+  }
+  else if(isArray(input)) {
+    var date = new Date(...input);    
+  }
+  let day = date.getDate() < 10 ? "0"+date.getDate() : date.getDate();
+  let monthUnformatted = date.getMonth()+1
+  let month =  monthUnformatted < 10 ? "0"+monthUnformatted : monthUnformatted;
+  let year = date.getFullYear().toString().substr(-2);
+  let formatted = day+"."+month+"."+year;
   console.log(formatted);
   return formatted;
 };
