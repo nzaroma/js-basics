@@ -17,16 +17,16 @@ const changeCase = (str) => {
 };
 
 function isUpperCase(char) {
-  return char == char.toUpperCase();
+  return char === char.toUpperCase();
 }
 function convertChar(c) {
   return isUpperCase(c) ? c.toLowerCase() : c.toUpperCase();
 }
 
 const changeCase2 = (str) => {
-  return [...str]  //transform string to array of chars
+  return Array.from(str)  //transform string to array of chars
     .map(c => convertChar(c))
-    .join("");  //collect
+    .join('');  //collect
 };
 
 
@@ -49,38 +49,58 @@ const filterNonUnique = (arr) => {
       map.set(elem, false);
     }
   }
-  return [...map]
+  return Array.from(map)
     .filter( ([key, value]) => value === false )
     .map(([key, value]) => key);
 };
 
 describe('filterNonUnique', () => {
   it('should filter out non-unique values in an array', () => {
-    expect(filterNonUnique([1, 2, 2, 3, 4, 4, 5])).to.eql([1,3,5]);
+    expect(filterNonUnique([1, 2, 2, 2, 3, 4, 4, 5])).to.eql([1,3,5]);
     expect(filterNonUnique([1, 2, 3, 4])).to.eql([1,2,3,4]);
   });
 });
 
 // ==== Sort string in alphabetical order ====
-const alphabetSort = (str) => {return[...str].sort().join("")};
+const alphabetSort = (str) => {
+  if(str && isString(str)) {
+      return Array.from(str).sort().join("");  
+  }
+  return '';
+  
+};
 
 describe('alphabetSort', () => {
   it('should accept a string type only', () => {
-    expect(() => alphabetSort()).to.throw();
-    expect(() => alphabetSort('Text')).not.to.throw();
+    expect(alphabetSort()).to.equal('');    
+    expect(alphabetSort(123)).to.equal('');
+    expect(alphabetSort(null)).to.equal('');
+    expect(alphabetSort([])).to.equal('');
+    expect(alphabetSort([1,2,3])).to.equal('');
+    expect(alphabetSort("")).to.equal('');
   });
 
   it('should convert the letters of a given string in alphabetical order', () => {
     expect(alphabetSort('Python')).to.equal('Phnoty');
+    expect(alphabetSort('Text')).to.equal('Tetx');
   });
 });
 
 // ==== Get min integer ====
-const getSecondMinimum = (arr) => {return arr.sort()[1]};
+const getSecondMinimum = (arr) => {
+  if(arr && arr.length > 1) {
+    return arr.sort()[1];
+  }
+  return undefined;
+  
+};
 
 describe('getSecondMinimum', () => {
   it('should get array of integers and return second minimum value', () => {
     expect(getSecondMinimum([5,0,7,3,8])).to.equal(3);
+    expect(getSecondMinimum([])).to.equal(undefined);
+    expect(getSecondMinimum([10])).to.equal(undefined);
+    expect(getSecondMinimum(null)).to.equal(undefined);    
   });
 });
 
@@ -97,9 +117,9 @@ describe('doubleEveryEven', () => {
 
 // ==== Create array with all possible pairs of two arrays ====
 const getArrayElementsPairs = (a1, a2) => {
-  let result = new Array();
-  for(let e1 of a1) {
-    for(let e2 of a2) {
+  const result = new Array();
+  for(const e1 of a1) {
+    for(const e2 of a2) {
       result.push([e1, e2]);
     }
   }
@@ -118,11 +138,11 @@ const deepEqual = (a1 , a2) => {
     //console.log("lengths are not equal " + Object.entries(a1).length + "  "  + Object.entries(a2).length);
     return false;
   }  
-  for (let [key, value] of Object.entries(a1)) {
+  for (const [key, value] of Object.entries(a1)) {
     //console.log("iterate of " + key + " ; " + value );
     if(typeof value === 'object' && value !== null) {
       //console.log("inside comparing objects " + value + " ; " + a2[key]);      
-      let innerObjTheSame = deepEqual(value, a2[key]);
+      const innerObjTheSame = deepEqual(value, a2[key]);
       //console.log("result of comparing " + innerObjTheSame);
       if(!innerObjTheSame) {
         //console.log("returning false because of " + innerObjTheSame);
@@ -147,31 +167,41 @@ describe('deepEqual', () => {
 });
 
 function isString(input) {
-  return Object.prototype.toString.call(input) === "[object String]";
+  //return Object.prototype.toString.call(input) === "[object String]";
+  return typeof input === 'string';
 }
 function isArray(input) {
   return Array.isArray(input);
 }
-// ==== Format date ====
-const formatDate = (input) => {
+
+function getDate(input) {
   if (isString(input)) {
-    var date = new Date(input);
+    return new Date(input);
   }
   else if(Object.prototype.toString.call(input) === '[object Date]') {
-    var date = input;
+    return input;
   }
-  else if(typeof input == 'number') {
-    var date = new Date();
+  else if(typeof input === 'number') {
+    const date = new Date();
     date.setTime(input);
+    return date;
   }
   else if(isArray(input)) {
-    var date = new Date(...input);    
+    return new Date(...input);    
   }
-  let day = date.getDate() < 10 ? "0"+date.getDate() : date.getDate();
-  let monthUnformatted = date.getMonth()+1
-  let month =  monthUnformatted < 10 ? "0"+monthUnformatted : monthUnformatted;
-  let year = date.getFullYear().toString().substr(-2);
-  let formatted = day+"."+month+"."+year;
+  else {
+    throw new Error('invalid input data');
+  }
+}
+// ==== Format date ====
+const formatDate = (input) => {
+  const date = getDate(input);
+  
+  const day = date.getDate() < 10 ? '0'+date.getDate() : date.getDate();
+  const monthUnformatted = date.getMonth()+1
+  const month =  monthUnformatted < 10 ? '0'+monthUnformatted : monthUnformatted;
+  const year = date.getFullYear().toString().substr(-2);
+  const formatted = day+'.'+month+'.'+year;
   console.log(formatted);
   return formatted;
 };
