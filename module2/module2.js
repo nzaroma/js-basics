@@ -46,10 +46,7 @@ const checkUsersValid = (goodUsers) => {
 };
 
 function filterAbsentUser(user, goodUsers) {
-  if (goodUsers.some(e => e.id === user.id)) {
-    return false;
-  }
-  return true;
+  return !goodUsers.some(e => e.id === user.id);
 }
 
 const testAllValid = checkUsersValid(goodUsers);
@@ -77,11 +74,10 @@ describe('checkUsersValid', () => {
 
 // ==== Reduce ====
 const reducer = (accumulator, currentValue) => { 
-  if(accumulator[currentValue] === undefined) {
-    accumulator[currentValue] = 1;
-    return accumulator;
+  if(!accumulator[currentValue]) {
+    accumulator[currentValue] = 0;    
   }
-  accumulator[currentValue] =accumulator[currentValue]+ 1;
+  accumulator[currentValue] += 1;
   return accumulator;
 }
 
@@ -116,16 +112,14 @@ describe('isPalindrome', () => {
 // ==== Recursion ====
 const factorial = (n) => {
   if(n < 0) return null;
-  if(n===0 || n===1) {
-    return 1;
-  }
+  if(n <= 1) return 1;
   return n*factorial(n - 1);
 };
 
 const amountToCoins = (n, coins, result=[]) => {    
   const fittedCoins = coins.filter( c => n/c >= 1);
   const maxCoin = Math.max(...fittedCoins);
-  if (maxCoin === undefined || n === 0) return result;
+  if (!maxCoin || n === 0) return result;
   result.push(maxCoin);
   return amountToCoins(n-maxCoin, coins, result);  
 };
@@ -137,7 +131,7 @@ const repeat = (fn, times) => {
 };
 
 const reduce = (array, f, initialValue) => {
-  var value = initialValue;
+  let value = initialValue;
   for(let i = 0; i < array.length; i++) {
     value = f(value, array[i], i, array); 
   }
