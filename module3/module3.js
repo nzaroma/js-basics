@@ -68,7 +68,7 @@ const getKeyValuePairs = (obj) => {
 };
 
 const getKeyValuePairs2 = (obj) => {  
-  if(!obj) return result;
+  if(!obj) return [];
   return Object.entries(obj).map(([key, value]) => [key, value]);
 };
 
