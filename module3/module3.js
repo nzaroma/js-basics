@@ -4,11 +4,11 @@ const expect = chai.expect;
 // ======================Array to List======================
 const arrayToList = (array) => {
   const result = {};
-  if(array === undefined || array === null) return result;  
+  if(!array) return result;  
   let link = result;
   for(let i = 0; i < array.length; i++) {
     link.value = array[i];
-    if(array[i+1] !== undefined) {
+    if (array[i+1]) {
       link.rest = {};
       link = link.rest;
     } else {
@@ -19,7 +19,7 @@ const arrayToList = (array) => {
 };
 
 const listToArray = (list, result = []) => {
-  if(list === undefined || list === null) return result;
+  if(!list) return result;
   const value = list.value;
   result.push(value);
   if(list.rest !== null) {
@@ -59,45 +59,63 @@ describe('listToArray', () => {
 // ======================Keys and values to list======================
 const getKeyValuePairs = (obj) => {
   const result = [];
-  if(obj === undefined || obj === null) return result;
-  for(let key in obj) {
-    const arrayFromElement = [key, obj[key]];
+  if(!obj) return result;
+  for(let [key, value] of Object.entries(obj)) {
+    const arrayFromElement = [key, value];
     result.push(arrayFromElement);
   }
   return result;
 };
 
+const getKeyValuePairs2 = (obj) => {  
+  if(!obj) return result;
+  return Object.entries(obj).map(([key, value]) => [key, value]);
+};
+
 describe('getKeyValuePairs', () => {
   it('should convert object into a list of [key, value] pairs', () => {
     const result = getKeyValuePairs({red: "#FF0000", green: "#00FF00", white: "#FFFFFF"});
-
     expect(result).to.eql([["red","#FF0000"],["green","#00FF00"],["white","#FFFFFF"]]);
+    
+    const result2 = getKeyValuePairs2({red: "#FF0000", green: "#00FF00", white: "#FFFFFF"});
+    expect(result2).to.eql([["red","#FF0000"],["green","#00FF00"],["white","#FFFFFF"]]);
   });  
 });
 
 // ======================Invert keys and values======================
 const invertKeyValue = (obj) => {
   const result = {};
-  if(obj === undefined || obj === null) return result;
-  for(let key in obj) {
+  if(!obj) return result;
+  for(let [key, value] of Object.entries(obj)) {
     const value = obj[key];
     result[value] = key;
   }
   return result;
 };
 
+const invertKeyValue2 = (obj) => {
+  if(!obj) return {};
+  return  Object.entries(obj)
+    .reduce(function (accum, [key, value]) {
+      accum[value] = key;
+      return accum;
+    }, {}); 
+};
+
 describe('invertKeyValue', () => {
   it('should get a copy of the object where the keys have become the values and the values the keys', () => {
     const result = invertKeyValue({red: "#FF0000", green: "#00FF00", white: "#FFFFFF"});
-
     expect(result).to.eql({"#FF0000":"red","#00FF00":"green","#FFFFFF":"white"});
+    
+    const result2 = invertKeyValue2({red: "#FF0000", green: "#00FF00", white: "#FFFFFF"});
+    expect(result2).to.eql({"#FF0000":"red","#00FF00":"green","#FFFFFF":"white"});
   });  
 });
 
 // ======================Get all methods from object======================
 const getAllMethodsFromObject = (obj) => {
   const result = [];
-  if(obj === undefined || obj === null) return result;
+  if(!obj) return result;
   const properties = Object.getOwnPropertyNames(obj);
   for (const prop of properties) {
     if (typeof obj[prop] === 'function') result.push(prop);
@@ -119,9 +137,9 @@ describe('getAllMethodsFromObject', () => {
 });
 
 // ======================Groups======================
-class Groups {  
+class Groups {
   constructor(array) { this.array = array; }
-  static from(array) { return new Groups(array) };
+  static from(array) { return new Groups(Array.from(array)) };
   has(value) { return this.array.some(e => e === value)};
   add(value) { if(!this.array.includes(value)) this.array.push(value) };
   delete(value) { this.array = this.array.filter(e => e !== value) };
@@ -180,5 +198,17 @@ describe('Groups', () => {
     });
   });         
 });
+
+class Clock {
+  run() {
+    this.interval = setInterval(function() {
+      console.log(new Date().toLocaleTimeString());
+    }, 1000);
+  }
+  stop() { clearInterval(this.interval); }
+}
+
+
+
 
 mocha.run();
