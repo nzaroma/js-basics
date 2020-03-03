@@ -138,7 +138,7 @@ describe('getAllMethodsFromObject', () => {
 
 // ======================Groups======================
 class Groups {
-  constructor(array) { this.array = array; }
+  constructor(array) { this.array = Array.from(array); }
   static from(array) { return new Groups(Array.from(array)) };
   has(value) { return this.array.some(e => e === value)};
   add(value) { if(!this.array.includes(value)) this.array.push(value) };
@@ -165,6 +165,21 @@ describe('Groups', () => {
       
       expect(group.has(10)).to.equal(true);
       expect(group.has(30)).to.equal(false);    
+    });
+    it('should check if item exists in group "string"', () => {
+      const group = Groups.from('ab');
+      console.log(group)
+      expect(group.has('a')).to.equal(true);
+      expect(group.has('c')).to.equal(false);    
+    });
+    it('should check if item exists in group "map"', () => {
+      let map = new Map([
+        ['1',  'str1'],
+        [true, 'bool1']
+      ]);
+      const group = Groups.from(map);
+      console.log(group)
+      expect(group.length).to.equal(2);
     });
   });
   
@@ -196,7 +211,7 @@ describe('Groups', () => {
       expect(group.has(20)).to.equal(false);
       expect(group.length).to.equal(1);
     });
-  });         
+  });     
 });
 
 class Clock {
@@ -207,8 +222,5 @@ class Clock {
   }
   stop() { clearInterval(this.interval); }
 }
-
-
-
 
 mocha.run();
