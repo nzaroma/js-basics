@@ -1,3 +1,4 @@
+
 function delay(t, s) {
   const promise = new Promise((resolve, reject) => {
    setTimeout(function() {
@@ -84,32 +85,25 @@ const asyncTask2 = () => new Promise((resolve, reject) =>
 setTimeout(() => resolve('second resolved'), 1000));
 const asyncTask3 = () => new Promise((resolve, reject) =>
 setTimeout(() => reject('third rejected'), 1000));
-
 helper(function* main() {
  try {
- const a = asyncTask1();
- yield a;
- // a.then(r => console.log(r))
-   
- const b = asyncTask2();
- yield b;
- // b.then(r => console.log(r))
- 
- // console.log("a=" + a);
- // console.log(b);
+ const a = yield asyncTask1();
+ const b = yield asyncTask2();
+ console.log(a);
+ console.log(b);
  const c = yield asyncTask3();
  } catch(e) {
  console.log('error happened ', e);
  }
 });
-// → ‘first resolved’
-// → ‘second resolved’
-// → ‘error happened third rejected’
 
-async function helper(generator) {
-  let gen = generator();
-   gen.next().value.then(r => console.log(r))
-  gen.next().value.then(r => console.log(r))
- gen.next().value.catch(r => console.log(r))
-  
+
+
+function helper(generator) {
+  const g = generator();  
+  (function iterate(val) {
+    const next = g.next(val);
+    if(next.done) return next.value;
+    return next.value.then(v => iterate(v)).catch(e => g.throw(e));   
+  })();
 }
