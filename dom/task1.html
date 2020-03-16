@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+  <style type="text/css">
+    .container-input {
+  display: flex;
+  flex-direction: column;
+  width: 60%;
+  margin: 6px;
+}
+
+.container-result {
+  width: 40%;
+  display: flex;
+  margin: 6px;
+}
+
+.conatainer {
+  display: flex;
+  flex-direction: row;
+  margin: 6px;
+}
+
+input {
+  margin-bottom:11px;
+}
+  </style>
+  <script>
+    function copyText() {
+      const from = document.getElementById("from");
+      const to = document.getElementById("to");
+      const text = from.value;
+      to.textContent = text;
+    }
+    function search() {
+      const text = document.getElementById("search-field").value;
+      const where = document.getElementById("to");
+      const whereValue = where.textContent;
+      const array = whereValue.split(text)
+      if(array.lenght === 1) return;
+      const resultLine = array.join(text.bold())
+      where.innerHTML = resultLine;
+    }
+  </script>
+</head>
+<body>
+  <div class="conatainer">
+    <div class="container-input">
+      <input class="container" id="search-field" onChange="search()"></input>
+      <textarea class="container" id="from" onChange="copyText()"></textarea>
+    </div>
+    <div class="container-result">   
+      <p id="to"></p>
+    </div>
+  </div>
+</body>
+</html>

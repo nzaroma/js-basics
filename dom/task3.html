@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+  <script>
+    const bin = 'https://cdn4.iconfinder.com/data/icons/digital-media/128/trash-512.png';
+    let index = 2; 
+    let table;
+    function onLoad() {
+      table = document.getElementById("table");
+      table.onclick = handleClick;
+      table.ondblclick = handleDoubleClick;
+    }
+    function addRow() {
+      const tableBody = table.getElementsByTagName('tbody')[0]
+      const newRow = tableBody.insertRow();
+      newRow.id = 'row' + index;
+      const newCell0 = newRow.insertCell(0);
+      const newCell1 = newRow.insertCell(1);
+      const newCell2 = newRow.insertCell(2);
+      const newText0  = document.createTextNode('New row');
+      const newText1  = document.createTextNode('New row');
+      const newText2  = document.createTextNode('New row');
+      const image = document.createElement('img');
+      image.src = bin;      
+      image.style.width = "20px";
+      image.id = index;
+      newCell0.appendChild(newText0);
+      newCell1.appendChild(newText1);
+      newCell2.appendChild(image);
+      index++;
+    }
+    
+    function handleClick(event) {
+      const img = event.target.closest('img')
+      if(!img) return;
+      const row = document.getElementById('row' + img.id);
+      if(!row) return;
+      row.remove();      
+    }
+    
+    
+    function handleDoubleClick(event) {
+      const img = event.target.closest('img')
+      if(img) return;
+      const header = event.target.closest('th')
+      if(header) return;
+      
+      //check if we already created input
+      const createdInput = event.target.closest('input')
+      if(createdInput) return;
+      const cell = event.target.closest('td')
+      console.log(cell.id)
+      cell.innerText = '';
+      var input = document.createElement("input");
+      input.type = "text";
+      input.addEventListener("keydown", handleEnterKey);
+      
+      
+      cell.appendChild(input);
+      
+    }
+    
+    function handleEnterKey(event) {
+      if(event.key !== "Enter") return;
+      const input = event.target.closest('input')
+      const value = input.value;
+      
+      const cell = event.target.closest('td')
+      console.log(cell)
+      cell.innerText = value;
+      input.remove();
+    } 
+  </script>
+</head>
+<body onload="onLoad()">
+ <table id="table" border ="1" >
+   <tr>
+    <th>Name</th>
+    <th>Surname</th>
+     <th></th>
+  </tr>
+  <tr id="row0">
+    <td>1</td>
+    <td>2</td>
+    <td><img src = "https://cdn4.iconfinder.com/data/icons/digital-media/128/trash-512.png"
+             width = 20px
+             id = "0"
+             ></td>
+  </tr>
+   <tr id="row1">
+    <td>1</td>
+    <td>2</td>
+    <td><img src = "https://cdn4.iconfinder.com/data/icons/digital-media/128/trash-512.png"
+             width = 20px
+             id = "1"
+             ></td>
+  </tr>
+</table> 
+<button class="addButton" id="addButton" onClick="addRow()">Add row</button>
+</body>
+</html>
